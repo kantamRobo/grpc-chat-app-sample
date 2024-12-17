@@ -1,0 +1,31 @@
+// Protocol Bufferのバージョンを指定
+// 3はバージョン2よりも簡潔で使いやすい構文を提供する
+syntax = "proto3";
+
+// Protocol Buffersのパッケージ名を指定
+// 名前空間だと思ってください
+package helloworld;
+
+// 生成するGoコードをどのパッケージに配置するか指定
+// 実はディレクトリ構造も色々議論の余地があったり（後述）
+option go_package = "gen/api/helloworld";
+
+// Greeterという名前のサービスを定義
+// ここで定義されたサービスはRPCインターフェース（後述）として扱われる
+// gRPCは、このインターフェースの定義に基づいて通信を行うgRPCコードを自動生成する
+service Greeter {
+	// クライアントからHelloRequestというメッセージを受け取り、
+	// それに基づいてHelloReplyというメッセージを返す、
+	// SayHelloというRPC（後述）を提供
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// クライアントから送られてくるメッセージの定義（後述）
+message HelloRequest {
+  string name = 1;
+}
+
+// サーバーからクライアントに返すメッセージの定義（後述）
+message HelloReply {
+  string message = 1;
+}
