@@ -1,0 +1,35 @@
+steps:
+# Dockerイメージをビルドするステップ
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t',
+    'us-central1-docker.pkg.dev/$PROJECT_ID/grpc-chat-server/grpc-chat-server:${SHORT_SHA}',
+    '.'
+  ]
+
+# ビルドしたイメージをArtifact Registryにプッシュするステップ
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'push',
+    'us-central1-docker.pkg.dev/$PROJECT_ID/grpc-chat-server/grpc-chat-server:${SHORT_SHA}'
+  ]
+
+# Cloud Runにデプロイするステップ
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: [
+    'run',
+    'deploy',
+    'grpc-chat-server',
+    '--image',
+    'us-central1-docker.pkg.dev/$PROJECT_ID/grpc-chat-server/grpc-chat-server:${SHORT_SHA}',
+    '--platform',
+    'managed',
+    '--region',
+    'us-central1',
+    '--allow-unauthenticated',
+    '--use-http2'
+  ]
+
+# logsBucketを指定してログを保存する
+logsBucket: 'gs://grpc-chat-app-logs'
